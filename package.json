@@ -1,0 +1,63 @@
+{
+  "name": "data-table-material",
+  "version": "1.0.3",
+  "description": "A dynamic and customizable table component for React, built with Material UI & TypeScript.",
+  "type": "module",
+  "main": "dist/data-table-material.cjs",
+  "module": "dist/data-table-material.js",
+  "types": "dist/types/index.d.ts",
+  "style": "dist/style.css",
+  "files": [
+    "dist",
+    "src/components/style.css",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "rm -rf dist && tsc --b --emitDeclarationOnly && vite build",
+    "lint": "eslint .",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@mui/icons-material": "^6.4.8",
+    "@mui/material": "^6.4.8",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.11",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.2.0",
+    "vite-plugin-dts": "^4.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/meet503186/data-table-material.git"
+  },
+  "keywords": [
+    "react",
+    "mui",
+    "input",
+    "form",
+    "typescript",
+    "dynamic-fields",
+    "dynamic-field"
+  ],
+  "author": "Harmeet Singh",
+  "license": "MIT"
+}

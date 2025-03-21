@@ -1,0 +1,27 @@
+.column {
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* border-bottom: none; */
+}
+
+.resizer {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  height: 40%;
+  transform: translateY(-50%);
+  width: 3px;
+  background: #eef2f6;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+  border-radius: 10px;
+}
+
+.resizer:hover,
+.resizer:active {
+  width: 4px;
+  background: #673ab7;
+}

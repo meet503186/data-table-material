@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM"],
+    "skipLibCheck": true,
+
+    "declaration": true,  // ✅ Generate .d.ts files
+    "declarationDir": "dist/types", // ✅ Output types to dist/types
+    "emitDeclarationOnly": true,  // ✅ Only emit type declarations
+
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "strict": true,
+    "jsx": "react-jsx",  // ✅ Fix JSX error
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
