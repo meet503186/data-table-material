@@ -120,13 +120,16 @@ const DataTable = <T extends Record<string, any>>({
                   }}
                 >
                   {serialNumber && (
-                    <TableCell key={index} className="column">
-                      {!!paginationData
-                        ? paginationData.pageSize *
-                            (paginationData.pageNo - 1) +
-                          (index + 1)
-                        : index + 1}
-                    </TableCell>
+                    <RenderColumns
+                      columns={[{ _key: "s.no.", label: "S. No." }]}
+                      item={{
+                        "s.no.": !!paginationData
+                          ? paginationData.pageSize *
+                              (paginationData.pageNo - 1) +
+                            (index + 1)
+                          : index + 1,
+                      }}
+                    />
                   )}
                   <RenderColumns
                     columns={columns}
