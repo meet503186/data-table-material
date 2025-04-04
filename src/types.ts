@@ -68,6 +68,11 @@ export namespace IDataTable {
      * Custom styles for the paper element.
      */
     paperStyle?: SxProps;
+
+    /**
+     * Array of column keys that should be visible in the table.
+     */
+    visibleColumns?: string[];
   }
 
   /**
@@ -121,42 +126,66 @@ export namespace IDataTable {
    *
    * @template T - A generic type extending `GenericRecord`.
    */
+  /**
+   * Represents an additional column in a data table with customizable properties and actions.
+   *
+   * @template T - The type of the row data.
+   */
   export interface AdditionalColumn<T extends GenericRecord> {
     /**
-     * The key of the additional column, which can be a property of the row data or a custom string.
+     * The key of the additional column, which can either be a property of the row data
+     * or a custom string.
+     *
+     * @type {Extract<keyof T, string> | (string & { custom?: true })}
      */
     _key: Extract<keyof T, string> | (string & { custom?: true });
 
     /**
      * The label to display for the additional column.
+     *
+     * @type {string}
      */
     label: string;
 
     /**
-     * Callback function triggered when the column action is performed.
+     * Callback function triggered when an action is performed on the column.
      *
-     * @param row - The row data for the action.
+     * @param {T} row - The row data associated with the action.
      */
     onClick: (row: T) => void;
 
     /**
-     * The type of the additional column.
+     * The type of the additional column, which determines its behavior.
      *
-     * - `"switch"`: A toggle switch.
-     * - `"deleteButton"`: A delete button.
+     * @type {"switch" | "deleteButton"}
+     * @remarks
+     * - `"switch"`: Represents a toggle switch.
+     * - `"deleteButton"`: Represents a delete button.
      */
     type: "switch" | "deleteButton";
 
     /**
-     * Whether the additional column is hidden.
+     * Indicates whether the additional column is hidden.
+     *
+     * @type {boolean}
      * @default false
      */
     hidden?: boolean;
 
     /**
      * The width of the additional column in pixels.
+     *
+     * @type {number | undefined}
      */
     width?: number;
+
+    /**
+     * A function to determine if the user has permission to interact with the column.
+     *
+     * @param {T} row - The row data to evaluate permissions for.
+     * @returns {boolean} - Returns `true` if the user has permission, otherwise `false`.
+     */
+    hasPermission?: (row: T) => boolean;
   }
 
   /**

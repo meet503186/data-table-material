@@ -40,56 +40,65 @@ const AdditionalColumnRows = <T extends IDataTable.GenericRecord>({
   data: IDataTable.AdditionalColumn<T>[];
   item: T;
 }): (React.JSX.Element | null)[] => {
-  return data.map(({ label, width, _key, hidden, type, onClick }) => {
-    if (hidden) {
-      return null;
-    }
-
-    function renderCell() {
-      switch (type) {
-        case "switch":
-          return (
-            <Switch
-              size="small"
-              checked={!!item[_key]}
-              onClick={(e) => {
-                e.stopPropagation();
-                onClick(item);
-              }}
-            />
-          );
-
-        case "deleteButton":
-          return (
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                onClick(item);
-              }}
-            >
-              <DeleteIcon color="error" fontSize="small" />
-            </IconButton>
-          );
+  return data.map(
+    ({ label, width, _key, hidden, type, onClick, hasPermission }) => {
+      if (hidden) {
+        return null;
       }
-    }
 
-    return (
-      <TableCell
-        key={label}
-        className="column"
-        title={_key ? item[_key]?.toString() : ""}
-        sx={{
-          whiteSpace: "nowrap",
-          textOverflow: "ellipsis",
-          overflow: "hidden",
-          maxWidth: width ?? 150,
-        }}
-      >
-        {renderCell()}
-      </TableCell>
-    );
-  });
+      const isDisabled = hasPermission ? !hasPermission(item) : false;
+
+      function renderCell() {
+        switch (type) {
+          case "switch":
+            return (
+              <Switch
+                size="small"
+                checked={!!item[_key]}
+                disabled={isDisabled}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick(item);
+                }}
+              />
+            );
+
+          case "deleteButton":
+            return (
+              <IconButton
+                size="small"
+                disabled={isDisabled}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick(item);
+                }}
+              >
+                <DeleteIcon
+                  color={isDisabled ? "disabled" : "error"}
+                  fontSize="small"
+                />
+              </IconButton>
+            );
+        }
+      }
+
+      return (
+        <TableCell
+          key={label}
+          className="column"
+          title={_key ? item[_key]?.toString() : ""}
+          sx={{
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            maxWidth: width ?? 150,
+          }}
+        >
+          {renderCell()}
+        </TableCell>
+      );
+    }
+  );
 };
 
 export default AdditionalColumnRows;

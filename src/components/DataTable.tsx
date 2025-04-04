@@ -42,6 +42,7 @@ const DataTable = <T extends Record<string, any>>({
   onRowClick,
   containerStyle = {},
   paperStyle = {},
+  visibleColumns,
 }: IDataTable.Props<T>): React.JSX.Element => {
   const theme = useTheme();
 
@@ -76,6 +77,9 @@ const DataTable = <T extends Record<string, any>>({
                 )}
                 {columns.map(({ _key, label, width, hidden }) => {
                   if (hidden) return null;
+
+                  if (visibleColumns && !visibleColumns.includes(_key))
+                    return null;
 
                   return (
                     <Resizable>
@@ -124,7 +128,11 @@ const DataTable = <T extends Record<string, any>>({
                         : index + 1}
                     </TableCell>
                   )}
-                  <RenderColumns columns={columns} item={item} />
+                  <RenderColumns
+                    columns={columns}
+                    item={item}
+                    visibleColumns={visibleColumns}
+                  />
 
                   {additionalColumns && (
                     <AdditionalColumnRows

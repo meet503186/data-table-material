@@ -4,16 +4,18 @@ import { IDataTable } from "../types";
 const RenderColumns = <T extends IDataTable.GenericRecord>({
   columns,
   item,
+  visibleColumns,
 }: {
   columns: IDataTable.Column<T>[];
   item: T;
+  visibleColumns?: IDataTable.Props<T>["visibleColumns"];
 }) => {
   return (
     <>
       {columns.map(({ renderCell, width, _key, hidden, sx }) => {
-        if (hidden) {
-          return null;
-        }
+        if (hidden) return null;
+
+        if (visibleColumns && !visibleColumns.includes(_key)) return;
 
         return (
           <TableCell
