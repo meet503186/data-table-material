@@ -1,4 +1,4 @@
-import { IconButton, Switch, TableCell } from "@mui/material";
+import { IconButton, Switch, TableCell, TableProps } from "@mui/material";
 import { IDataTable } from "../types";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -36,9 +36,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const AdditionalColumnRows = <T extends IDataTable.GenericRecord>({
   data,
   item,
+  size = "small",
 }: {
   data: IDataTable.AdditionalColumn<T>[];
   item: T;
+  size?: TableProps["size"];
 }): (React.JSX.Element | null)[] => {
   return data.map(
     ({ label, width, _key, hidden, type, onClick, hasPermission }) => {
@@ -85,6 +87,7 @@ const AdditionalColumnRows = <T extends IDataTable.GenericRecord>({
       return (
         <TableCell
           key={label}
+          size={size}
           className="column"
           title={_key ? item[_key]?.toString() : ""}
           sx={{

@@ -4,6 +4,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   /* border-bottom: none; */
+  border-bottom: 1px solid inherit !important;
+  /* padding: 10px !important; */
 }
 
 .resizer {
@@ -20,8 +22,12 @@
   border-radius: 10px;
 }
 
-.resizer:hover,
+/* .resizer:hover,
 .resizer:active {
   width: 4px;
-  background: #673ab7;
-}
+  background: inherit;
+} */
+
+/* .MuiTableCell-head {
+  padding: 10px !important;
+} */

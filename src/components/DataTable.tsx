@@ -5,14 +5,13 @@ import TableHead from "@mui/material/TableHead";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import { Paper, useTheme } from "@mui/material";
+import { Paper, Typography, useTheme } from "@mui/material";
 import Resizable from "./Resizable";
 import { IDataTable } from "../types";
 import AdditonalColumnHeaders from "./AdditonalColumnHeaders";
-import AdditionalColumnRows from "./AdditonalColumnRows";
 import CustomPagination from "./CustomPagination";
 import "./style.css";
-import RenderColumns from "./RenderColumns";
+import RenderRow from "./RenderRow";
 
 /**
  * A generic DataTable component for rendering tabular data with customizable columns, rows, and additional features.
@@ -43,6 +42,9 @@ const DataTable = <T extends Record<string, any>>({
   containerStyle = {},
   paperStyle = {},
   visibleColumns,
+  getExpandableTableConfig,
+  size = "small",
+  ...rest
 }: IDataTable.Props<T>): React.JSX.Element => {
   const theme = useTheme();
 
@@ -58,11 +60,31 @@ const DataTable = <T extends Record<string, any>>({
         }}
       >
         <TableContainer
-          sx={{ minHeight: 500, mt: 2, overflow: "auto", ...containerStyle }}
+          sx={{
+            minHeight: "inherit",
+            overflow: "auto",
+            ...containerStyle,
+          }}
         >
-          <Table stickyHeader sx={{ minWidth: 800 }} aria-label="sticky table">
+          <Table
+            size={size}
+            stickyHeader
+            sx={{ minWidth: 800 }}
+            aria-label="collapsible table"
+            {...rest}
+          >
             <TableHead>
               <TableRow>
+                {getExpandableTableConfig && (
+                  <TableCell
+                    sx={{
+                      minWidth: 80,
+                      fontWeight: 600,
+                      borderBottom: `1px solid ${theme.palette.grey[300]}`,
+                    }}
+                  ></TableCell>
+                )}
+
                 {serialNumber && (
                   <TableCell
                     key={"s.no."}
@@ -75,6 +97,7 @@ const DataTable = <T extends Record<string, any>>({
                     S. No.
                   </TableCell>
                 )}
+
                 {columns.map(({ _key, label, width, hidden }) => {
                   if (hidden) return null;
 
@@ -94,7 +117,20 @@ const DataTable = <T extends Record<string, any>>({
                           }}
                         >
                           {label}
-                          <span className="resizer" ref={ref}></span>
+                          <Typography
+                            className="resizer"
+                            component={"span"}
+                            ref={ref}
+                            color="primary"
+                            sx={{
+                              ":active": {
+                                background: theme.palette.primary.main,
+                              },
+                              ":hover": {
+                                background: theme.palette.primary.main,
+                              },
+                            }}
+                          ></Typography>
                         </TableCell>
                       )}
                     </Resizable>
@@ -107,44 +143,34 @@ const DataTable = <T extends Record<string, any>>({
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((item: T, index: number) => (
-                <TableRow
-                  hover
-                  key={index}
-                  sx={{
-                    "&:last-of-type td, &:last-of-type th": { border: 0 },
-                    cursor: onRowClick ? "pointer" : "default",
-                  }}
-                  onClick={() => {
-                    onRowClick && onRowClick(item);
-                  }}
-                >
-                  {serialNumber && (
-                    <RenderColumns
-                      columns={[{ _key: "s.no.", label: "S. No." }]}
-                      item={{
-                        "s.no.": !!paginationData
-                          ? paginationData.pageSize *
-                              (paginationData.pageNo - 1) +
-                            (index + 1)
-                          : index + 1,
-                      }}
-                    />
-                  )}
-                  <RenderColumns
-                    columns={columns}
-                    item={item}
+              {rows.map((item: T, index: number) => {
+                return (
+                  <RenderRow
+                    key={index}
+                    row={{
+                      ...(serialNumber
+                        ? {
+                            "s.no.": !!paginationData
+                              ? paginationData.pageSize *
+                                  (paginationData.pageNo - 1) +
+                                (index + 1)
+                              : index + 1,
+                          }
+                        : {}),
+                      ...item,
+                    }}
+                    columns={
+                      serialNumber
+                        ? [{ _key: "s.no.", label: "S. No." }, ...columns]
+                        : columns
+                    }
                     visibleColumns={visibleColumns}
+                    additionalColumns={additionalColumns}
+                    onClick={onRowClick}
+                    getExpandableTableConfig={getExpandableTableConfig}
                   />
-
-                  {additionalColumns && (
-                    <AdditionalColumnRows
-                      data={additionalColumns}
-                      item={item}
-                    />
-                  )}
-                </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>

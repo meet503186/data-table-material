@@ -1,4 +1,4 @@
-import { TableCell, useTheme } from "@mui/material";
+import { TableCell, TableProps, useTheme } from "@mui/material";
 import { IDataTable } from "../types";
 
 /**
@@ -20,8 +20,10 @@ import { IDataTable } from "../types";
  */
 const AdditonalColumnHeaders = <T extends IDataTable.GenericRecord>({
   data,
+  size = "small",
 }: {
   data: IDataTable.AdditionalColumn<T>[];
+  size?: TableProps["size"];
 }): (React.JSX.Element | null)[] => {
   const theme = useTheme();
 
@@ -33,6 +35,7 @@ const AdditonalColumnHeaders = <T extends IDataTable.GenericRecord>({
     return (
       <TableCell
         key={label}
+        size={size}
         className="column"
         sx={{
           minWidth: width ?? 150,

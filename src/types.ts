@@ -1,4 +1,4 @@
-import { SxProps } from "@mui/material";
+import { SxProps, TableProps } from "@mui/material";
 import { ReactNode } from "react";
 
 /**
@@ -11,7 +11,10 @@ export namespace IDataTable {
    * @template T - A generic type extending `GenericRecord`.
    */
 
-  export interface Props<T extends GenericRecord> {
+  export interface Props<
+    T extends GenericRecord,
+    TChild extends GenericRecord = T
+  > extends TableProps {
     /**
      * Whether to display a serial number column.
      * @default false
@@ -73,6 +76,18 @@ export namespace IDataTable {
      * Array of column keys that should be visible in the table.
      */
     visibleColumns?: string[];
+
+    /**
+     * Function that returns the child table rows and columns for the expandable section.
+     * If it returns `undefined`, the row is considered non-expandable.
+     */
+    getExpandableTableConfig?: (row: T) => {
+      header?: string;
+      serialNumber?: boolean;
+      rows: TChild[];
+      columns: Column<TChild>[];
+      size?: TableProps["size"];
+    };
   }
 
   /**
@@ -119,6 +134,11 @@ export namespace IDataTable {
      * Custom styles for the column.
      */
     sx?: SxProps;
+
+    /**
+     * The title attribute for the column, which will display as a tooltip when hovering over the column's data.
+     */
+    title?: string;
   }
 
   /**

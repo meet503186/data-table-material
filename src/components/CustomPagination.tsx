@@ -64,7 +64,12 @@ const CustomPagination = ({
         page={pageNo - 1}
         onPageChange={onPageChange}
         onRowsPerPageChange={onRowsPerPageChange}
-        sx={{ border: 0 }}
+        sx={{ border: 0, overflow: "hidden" }}
+        slotProps={{
+          toolbar: {
+            sx: { p: 0 },
+          },
+        }}
       />
     </Typography>
   );
