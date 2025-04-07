@@ -11,10 +11,7 @@ export namespace IDataTable {
    * @template T - A generic type extending `GenericRecord`.
    */
 
-  export interface Props<
-    T extends GenericRecord,
-    TChild extends GenericRecord = T
-  > extends TableProps {
+  export interface Props<T extends GenericRecord> extends TableProps {
     /**
      * Whether to display a serial number column.
      * @default false
@@ -78,16 +75,12 @@ export namespace IDataTable {
     visibleColumns?: string[];
 
     /**
-     * Function that returns the child table rows and columns for the expandable section.
-     * If it returns `undefined`, the row is considered non-expandable.
+     * Callback function to get the configuration for an expandable table row.
+     *
+     * @param row - The row data for which the expandable configuration is needed.
+     * @returns A ReactNode representing the expandable table configuration for the given row.
      */
-    getExpandableTableConfig?: (row: T) => {
-      header?: string;
-      serialNumber?: boolean;
-      rows: TChild[];
-      columns: Column<TChild>[];
-      size?: TableProps["size"];
-    };
+    getExpandableTableConfig?: (row: T) => ReactNode;
   }
 
   /**
