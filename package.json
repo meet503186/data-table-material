@@ -52,11 +52,11 @@
   "keywords": [
     "react",
     "mui",
-    "input",
-    "form",
     "typescript",
-    "dynamic-fields",
-    "dynamic-field"
+    "material-table",
+    "data-table",
+    "dynamic-table",
+    "data-table-materil"
   ],
   "author": "Harmeet Singh",
   "license": "MIT"
