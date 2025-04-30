@@ -94,7 +94,7 @@ const AdditionalColumnRows = <T extends IDataTable.GenericRecord>({
             whiteSpace: "nowrap",
             textOverflow: "ellipsis",
             overflow: "hidden",
-            maxWidth: width ?? 150,
+            maxWidth: width ?? 80,
           }}
         >
           {renderCell()}
