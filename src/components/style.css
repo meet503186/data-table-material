@@ -3,9 +3,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  /* border-bottom: none; */
-  border-bottom: 1px solid inherit !important;
-  /* padding: 10px !important; */
 }
 
 .resizer {

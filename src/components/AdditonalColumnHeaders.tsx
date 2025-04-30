@@ -38,6 +38,7 @@ const AdditonalColumnHeaders = <T extends IDataTable.GenericRecord>({
         size={size}
         className="column"
         sx={{
+          width: width ?? 150,
           minWidth: width ?? 150,
           fontWeight: 600,
           borderBottom: `1px solid ${theme.palette.grey[300]}`,

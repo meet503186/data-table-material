@@ -69,7 +69,7 @@ const DataTable = <T extends Record<string, any>>({
           <Table
             size={size}
             stickyHeader
-            sx={{ minWidth: 800 }}
+            sx={{ minWidth: 800, tableLayout: "fixed" }}
             aria-label="collapsible table"
             {...rest}
           >
@@ -79,6 +79,7 @@ const DataTable = <T extends Record<string, any>>({
                   <TableCell
                     sx={{
                       minWidth: 80,
+                      width: 80,
                       fontWeight: 600,
                       borderBottom: `1px solid ${theme.palette.grey[300]}`,
                     }}
@@ -90,6 +91,7 @@ const DataTable = <T extends Record<string, any>>({
                     key={"s.no."}
                     sx={{
                       minWidth: 80,
+                      width: 80,
                       fontWeight: 600,
                       borderBottom: `1px solid ${theme.palette.grey[300]}`,
                     }}
@@ -111,6 +113,7 @@ const DataTable = <T extends Record<string, any>>({
                           key={_key}
                           className="column"
                           sx={{
+                            width: width ?? 150,
                             minWidth: width ?? 150,
                             fontWeight: 600,
                             borderBottom: `1px solid ${theme.palette.grey[300]}`,
