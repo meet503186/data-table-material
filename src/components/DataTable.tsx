@@ -14,19 +14,28 @@ import "./style.css";
 import RenderRow from "./RenderRow";
 
 /**
- * A generic DataTable component for rendering tabular data with customizable columns, rows, and additional features.
+ * A generic, reusable DataTable component for rendering tabular data with optional features
+ * such as pagination, expandable rows, and additional columns. The component is highly customizable
+ * and supports localization, dynamic column visibility, and resizable columns.
  *
- * @template T - The type of the data rows, extending a record with string keys and any values.
+ * @template T - The type of the data rows, extending `Record<string, any>`.
  *
  * @param {IDataTable.Props<T>} props - The props for the DataTable component.
- * @param {boolean} props.serialNumber - Whether to display a serial number column.
+ * @param {boolean} [props.serialNumber] - Whether to display a serial number column.
  * @param {T[]} props.rows - The data rows to be displayed in the table.
- * @param {IDataTable.Column<T>[]} props.columns - The column definitions for the table.
- * @param {IDataTable.PaginationData} [props.paginationData] - Optional pagination data for calculating serial numbers.
- * @param {IDataTable.AdditionalColumn[]} [props.additionalColumns] - Optional additional columns to be rendered.
- * @param {(item: T) => void} [props.onRowClick] - Optional callback triggered when a row is clicked.
- * @param {React.CSSProperties} [props.containerStyle={}] - Optional custom styles for the table container.
- * @param {React.CSSProperties} [props.paperStyle={}] - Optional custom styles for the Paper component.
+ * @param {IDataTable.Column[]} props.columns - The column definitions for the table.
+ * @param {boolean} [props.pagination=false] - Whether to enable pagination.
+ * @param {IDataTable.PaginationData} [props.paginationData] - The pagination data, if pagination is enabled.
+ * @param {(data: IDataTable.PaginationData) => void} [props.onChangePaginationData] - Callback for handling pagination changes.
+ * @param {IDataTable.AdditionalColumn[]} [props.additionalColumns] - Additional columns to be appended to the table.
+ * @param {(row: T) => void} [props.onRowClick] - Callback for handling row click events.
+ * @param {React.CSSProperties} [props.containerStyle={}] - Custom styles for the table container.
+ * @param {React.CSSProperties} [props.paperStyle={}] - Custom styles for the paper container.
+ * @param {string[]} [props.visibleColumns] - A list of column keys to control column visibility.
+ * @param {IDataTable.ExpandableTableConfig<T>} [props.getExpandableTableConfig] - Configuration for expandable rows.
+ * @param {"small" | "medium"} [props.size="small"] - The size of the table rows.
+ * @param {(key: string) => string} [props.getLocalizedText] - Function to retrieve localized text for column headers and labels.
+ * @param {object} [props.rest] - Additional props to be passed to the underlying `<Table>` component.
  *
  * @returns {React.JSX.Element} The rendered DataTable component.
  */
@@ -44,6 +53,7 @@ const DataTable = <T extends Record<string, any>>({
   visibleColumns,
   getExpandableTableConfig,
   size = "small",
+  getLocalizedText,
   ...rest
 }: IDataTable.Props<T>): React.JSX.Element => {
   const theme = useTheme();
@@ -96,7 +106,9 @@ const DataTable = <T extends Record<string, any>>({
                       borderBottom: `1px solid ${theme.palette.grey[300]}`,
                     }}
                   >
-                    S. No.
+                    {getLocalizedText
+                      ? getLocalizedText("serialNumber")
+                      : "S. No."}
                   </TableCell>
                 )}
 
@@ -111,7 +123,6 @@ const DataTable = <T extends Record<string, any>>({
                       {({ ref }) => (
                         <TableCell
                           key={_key}
-                          className="column"
                           sx={{
                             whiteSpace: "nowrap",
                             textOverflow: "ellipsis",
@@ -121,7 +132,7 @@ const DataTable = <T extends Record<string, any>>({
                             borderBottom: `1px solid ${theme.palette.grey[300]}`,
                           }}
                         >
-                          {label}
+                          {getLocalizedText ? getLocalizedText(label) : label}
                           <Typography
                             className="resizer"
                             component={"span"}
@@ -143,7 +154,10 @@ const DataTable = <T extends Record<string, any>>({
                 })}
 
                 {additionalColumns && (
-                  <AdditonalColumnHeaders data={additionalColumns} />
+                  <AdditonalColumnHeaders
+                    getLocalizedText={getLocalizedText}
+                    data={additionalColumns}
+                  />
                 )}
               </TableRow>
             </TableHead>

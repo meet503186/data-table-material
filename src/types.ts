@@ -81,6 +81,13 @@ export namespace IDataTable {
      * @returns A ReactNode representing the expandable table configuration for the given row.
      */
     getExpandableTableConfig?: (row: T) => ReactNode;
+
+    /**
+     * @param text * @property {(text: string) => string} [getLocalizedText] - Callback function to localize text.
+     * The `text` parameter contains the string to be localized.
+     * @returns
+     */
+    getLocalizedText?: (text: string) => string;
   }
 
   /**

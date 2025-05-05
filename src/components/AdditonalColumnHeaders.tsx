@@ -21,9 +21,11 @@ import { IDataTable } from "../types";
 const AdditonalColumnHeaders = <T extends IDataTable.GenericRecord>({
   data,
   size = "small",
+  getLocalizedText,
 }: {
   data: IDataTable.AdditionalColumn<T>[];
   size?: TableProps["size"];
+  getLocalizedText?: IDataTable.Props<T>["getLocalizedText"];
 }): (React.JSX.Element | null)[] => {
   const theme = useTheme();
 
@@ -44,7 +46,7 @@ const AdditonalColumnHeaders = <T extends IDataTable.GenericRecord>({
           borderBottom: `1px solid ${theme.palette.grey[300]}`,
         }}
       >
-        {label}
+        {getLocalizedText ? getLocalizedText(label) : label}
       </TableCell>
     );
   });
