@@ -15,6 +15,7 @@ const RenderRow = <T extends IDataTable.GenericRecord>({
   onClick,
   getExpandableTableConfig,
   size = "small",
+  getLocalizedText,
 }: {
   row: T;
   columns: IDataTable.Column<T>[];
@@ -23,6 +24,7 @@ const RenderRow = <T extends IDataTable.GenericRecord>({
   onClick?: (item: T) => void;
   getExpandableTableConfig: IDataTable.Props<T>["getExpandableTableConfig"];
   size?: IDataTable.Props<T>["size"];
+  getLocalizedText?: IDataTable.Props<T>["getLocalizedText"];
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -78,6 +80,7 @@ const RenderRow = <T extends IDataTable.GenericRecord>({
           item={row}
           visibleColumns={visibleColumns}
           size={size}
+          getLocalizedText={getLocalizedText}
         />
 
         {additionalColumns && (

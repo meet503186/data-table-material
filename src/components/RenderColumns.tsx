@@ -6,12 +6,14 @@ const RenderColumns = <T extends IDataTable.GenericRecord>({
   item,
   visibleColumns,
   size = "small",
+  getLocalizedText,
 }: {
   columns: IDataTable.Column<T>[];
   item: T;
   visibleColumns?: IDataTable.Props<T>["visibleColumns"];
   size?: TableProps["size"];
   style?: SxProps;
+  getLocalizedText?: IDataTable.Props<T>["getLocalizedText"];
 }) => {
   return (
     <>
@@ -20,8 +22,13 @@ const RenderColumns = <T extends IDataTable.GenericRecord>({
 
         if (visibleColumns && !visibleColumns.includes(_key)) return null;
 
-        const _title =
-          title || (_key && renderCell ? renderCell(item) : item[_key]);
+        const _title = title
+          ? getLocalizedText
+            ? getLocalizedText(title)
+            : title
+          : _key && renderCell
+          ? renderCell(item)
+          : item[_key];
 
         return (
           <TableCell

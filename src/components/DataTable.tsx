@@ -187,6 +187,7 @@ const DataTable = <T extends Record<string, any>>({
                     additionalColumns={additionalColumns}
                     onClick={onRowClick}
                     getExpandableTableConfig={getExpandableTableConfig}
+                    getLocalizedText={getLocalizedText}
                   />
                 );
               })}
