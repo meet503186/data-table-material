@@ -4,6 +4,7 @@ import { IDataTable } from "../types";
 interface IProps {
   paginationData: IDataTable.Pagination;
   onChangePaginationData: (data: Partial<IDataTable.Pagination>) => void;
+  getLocalizedText?: IDataTable.Props<any>["getLocalizedText"];
 }
 
 /**
@@ -35,6 +36,7 @@ interface IProps {
 const CustomPagination = ({
   paginationData,
   onChangePaginationData,
+  getLocalizedText,
 }: IProps) => {
   const { pageNo, pageSize, totalRecords } = paginationData;
 
@@ -58,6 +60,9 @@ const CustomPagination = ({
       }}
     >
       <TablePagination
+        labelRowsPerPage={
+          getLocalizedText ? getLocalizedText("rowsPerPage") : "Rows per page:"
+        }
         rowsPerPage={pageSize}
         rowsPerPageOptions={[5, 10, 25, 50, 100]}
         count={totalRecords}

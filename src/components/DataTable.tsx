@@ -200,6 +200,7 @@ const DataTable = <T extends Record<string, any>>({
         <CustomPagination
           paginationData={paginationData}
           onChangePaginationData={onChangePaginationData}
+          getLocalizedText={getLocalizedText}
         />
       )}
     </>

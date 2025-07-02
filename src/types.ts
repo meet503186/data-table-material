@@ -87,7 +87,7 @@ export namespace IDataTable {
      * The `text` parameter contains the string to be localized.
      * @returns
      */
-    getLocalizedText?: (text: string) => string;
+    getLocalizedText?: (text: string, params?: Record<string, any>) => string;
   }
 
   /**
