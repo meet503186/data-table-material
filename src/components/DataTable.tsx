@@ -112,7 +112,7 @@ const DataTable = <T extends Record<string, any>>({
                   </TableCell>
                 )}
 
-                {columns.map(({ _key, label, width, hidden }) => {
+                {columns.map(({ _key, label, width, hidden, renderHeader }) => {
                   if (hidden) return null;
 
                   if (visibleColumns && !visibleColumns.includes(_key))
@@ -132,7 +132,11 @@ const DataTable = <T extends Record<string, any>>({
                             borderBottom: `1px solid ${theme.palette.grey[300]}`,
                           }}
                         >
-                          {getLocalizedText ? getLocalizedText(label) : label}
+                          {renderHeader
+                            ? renderHeader(rows[0])
+                            : getLocalizedText
+                            ? getLocalizedText(label)
+                            : label}
                           <Typography
                             className="resizer"
                             component={"span"}

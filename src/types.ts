@@ -120,6 +120,14 @@ export namespace IDataTable {
     renderCell?: (node: T) => ReactNode | string;
 
     /**
+     * Function to render the header content.
+     *
+     * @param node - The row data for the header.
+     * @returns The rendered header content.
+     */
+    renderHeader?: (node: T) => ReactNode | string;
+
+    /**
      * The width of the column, either in pixels or as a percentage.
      */
     width?: number | string;
