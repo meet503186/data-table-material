@@ -41,11 +41,11 @@ const CustomPagination = ({
   const { pageNo, pageSize, totalRecords } = paginationData;
 
   const onPageChange = (_: any, value: any) => {
-    onChangePaginationData({ pageNo: value + 1 });
+    onChangePaginationData({ pageNo: value + 1, pageSize });
   };
 
   const onRowsPerPageChange = (e: any) => {
-    onChangePaginationData({ pageSize: +e.target.value });
+    onChangePaginationData({ pageSize: +e.target.value, pageNo: 1 });
   };
 
   return (
