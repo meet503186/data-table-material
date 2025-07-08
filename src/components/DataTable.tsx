@@ -50,6 +50,7 @@ const DataTable = <T extends Record<string, any>>({
   onRowClick,
   containerStyle = {},
   paperStyle = {},
+  sx = {},
   visibleColumns,
   getExpandableTableConfig,
   size = "small",
@@ -79,7 +80,11 @@ const DataTable = <T extends Record<string, any>>({
           <Table
             size={size}
             stickyHeader
-            sx={{ tableLayout: "fixed", width: "fit-content" }}
+            sx={{
+              tableLayout: "fixed",
+              width: "fit-content",
+              ...sx,
+            }}
             aria-label="collapsible table"
             {...rest}
           >
