@@ -1,6 +1,6 @@
 {
   "name": "data-table-material",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "A dynamic and customizable table component for React, built with Material UI & TypeScript.",
   "type": "module",
   "main": "dist/data-table-material.cjs",
