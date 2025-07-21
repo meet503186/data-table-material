@@ -13,13 +13,14 @@ export interface IExportData<T extends IDataTable.GenericRecord> {
 
 class ExportManager {
   public static exportToCSV<T extends IDataTable.GenericRecord>(
-    config: IExportData<T>
+    config: IExportData<T>,
+    dateTimeStamp: boolean = true
   ) {
     const {
       headers,
       dataRows,
       filename = "table-export",
-    } = this.getExportData(config);
+    } = this.getExportData(config, dateTimeStamp);
 
     const csvContent = [headers, ...dataRows]
       .map((row) => row.join(","))
@@ -40,14 +41,15 @@ class ExportManager {
   }
 
   public static async exportToPDF<T extends IDataTable.GenericRecord>(
-    config: IExportData<T>
+    config: IExportData<T>,
+    dateTimeStamp: boolean = true
   ) {
     const {
       headers,
       dataRows,
       filename = "table-export",
       title = "Table Export",
-    } = this.getExportData(config);
+    } = this.getExportData(config, dateTimeStamp);
 
     const { default: jsPDF } = await import("jspdf");
     const autoTable = (await import("jspdf-autotable")).default;
@@ -70,7 +72,8 @@ class ExportManager {
   }
 
   private static getExportData<T extends IDataTable.GenericRecord>(
-    config: IExportData<T>
+    config: IExportData<T>,
+    dateTimeStamp: boolean = true
   ) {
     const { rows, columns, getLocalizedText } = config;
     const visibleColumns = columns.filter(
@@ -84,7 +87,9 @@ class ExportManager {
     return {
       headers,
       dataRows,
-      filename: config.filename,
+      filename: dateTimeStamp
+        ? `${config.filename}-${new Date().toISOString().replace(/[:.]/g, "-")}`
+        : config.filename,
       title: config.title,
     };
   }

@@ -71,22 +71,28 @@ const DataTable = <T extends Record<string, any>>({
   const theme = useTheme();
 
   const handleExportCSV = () => {
-    ExportManager.exportToCSV({
-      rows,
-      columns,
-      filename: exportConfig.filename || "table-export",
-      getLocalizedText,
-    });
+    ExportManager.exportToCSV(
+      {
+        rows,
+        columns,
+        filename: exportConfig.filename || "table-export",
+        getLocalizedText,
+      },
+      exportConfig.dateTimeStamp
+    );
   };
 
   const handleExportPDF = () => {
-    ExportManager.exportToPDF({
-      rows,
-      columns,
-      filename: exportConfig.filename || "table-export",
-      title: exportConfig.title || "Table Export",
-      getLocalizedText,
-    });
+    ExportManager.exportToPDF(
+      {
+        rows,
+        columns,
+        filename: exportConfig.filename || "table-export",
+        title: exportConfig.title || "Table Export",
+        getLocalizedText,
+      },
+      exportConfig.dateTimeStamp
+    );
   };
 
   const showExportButtons = exportConfig.csvEnabled || exportConfig.pdfEnabled;

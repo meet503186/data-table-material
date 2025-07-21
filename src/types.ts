@@ -265,5 +265,6 @@ export namespace IDataTable {
     title?: string;
     csvEnabled?: boolean;
     pdfEnabled?: boolean;
+    dateTimeStamp?: boolean;
   }
 }
