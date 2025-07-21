@@ -88,6 +88,11 @@ export namespace IDataTable {
      * @returns
      */
     getLocalizedText?: (text: string, params?: Record<string, any>) => string;
+
+    /**
+     * Configuration for exporting table data
+     */
+    exportConfig?: ExportConfig;
   }
 
   /**
@@ -137,6 +142,12 @@ export namespace IDataTable {
      * @default false
      */
     hidden?: boolean;
+
+    /**
+     * Whether the column is hidden.
+     * @default false
+     */
+    hiddenInExport?: boolean;
 
     /**
      * Custom styles for the column.
@@ -239,5 +250,20 @@ export namespace IDataTable {
      * The total number of records.
      */
     totalRecords: number;
+  }
+
+  /**
+   * Configuration options for exporting data from the table.
+   *
+   * @property filename - Optional name of the exported file.
+   * @property title - Optional title to include in the export.
+   * @property csvEnabled - If true, enables CSV export functionality.
+   * @property pdfEnabled - If true, enables PDF export functionality.
+   */
+  export interface ExportConfig {
+    filename?: string;
+    title?: string;
+    csvEnabled?: boolean;
+    pdfEnabled?: boolean;
   }
 }

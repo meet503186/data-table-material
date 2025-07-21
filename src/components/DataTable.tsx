@@ -5,13 +5,23 @@ import TableHead from "@mui/material/TableHead";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import { Paper, Typography, useTheme } from "@mui/material";
+import {
+  Button,
+  Paper,
+  Stack,
+  Toolbar,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import Resizable from "./Resizable";
 import { IDataTable } from "../types";
 import AdditonalColumnHeaders from "./AdditonalColumnHeaders";
 import CustomPagination from "./CustomPagination";
 import "./style.css";
 import RenderRow from "./RenderRow";
+import DownloadIcon from "@mui/icons-material/Download";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import ExportManager from "../utils/export-manager";
 
 /**
  * A generic, reusable DataTable component for rendering tabular data with optional features
@@ -55,9 +65,31 @@ const DataTable = <T extends Record<string, any>>({
   getExpandableTableConfig,
   size = "small",
   getLocalizedText,
+  exportConfig = {},
   ...rest
 }: IDataTable.Props<T>): React.JSX.Element => {
   const theme = useTheme();
+
+  const handleExportCSV = () => {
+    ExportManager.exportToCSV({
+      rows,
+      columns,
+      filename: exportConfig.filename || "table-export",
+      getLocalizedText,
+    });
+  };
+
+  const handleExportPDF = () => {
+    ExportManager.exportToPDF({
+      rows,
+      columns,
+      filename: exportConfig.filename || "table-export",
+      title: exportConfig.title || "Table Export",
+      getLocalizedText,
+    });
+  };
+
+  const showExportButtons = exportConfig.csvEnabled || exportConfig.pdfEnabled;
 
   return (
     <>
@@ -70,6 +102,43 @@ const DataTable = <T extends Record<string, any>>({
           ...paperStyle,
         }}
       >
+        {showExportButtons && (
+          <Toolbar
+            sx={{
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+              minHeight: "20px !important",
+              paddingBottom: 1,
+              paddingTop: 1,
+              borderBottom: `1px solid ${theme.palette.divider}`,
+            }}
+          >
+            <Stack direction="row" spacing={1}>
+              {exportConfig.csvEnabled && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<DownloadIcon />}
+                  onClick={handleExportCSV}
+                  sx={{ minWidth: "auto" }}
+                >
+                  CSV
+                </Button>
+              )}
+              {exportConfig.pdfEnabled && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<PictureAsPdfIcon />}
+                  onClick={handleExportPDF}
+                  sx={{ minWidth: "auto" }}
+                >
+                  PDF
+                </Button>
+              )}
+            </Stack>
+          </Toolbar>
+        )}
         <TableContainer
           sx={{
             minHeight: "inherit",
