@@ -93,6 +93,10 @@ export namespace IDataTable {
      * Configuration for exporting table data
      */
     exportConfig?: ExportConfig;
+
+    rowSelection?: boolean;
+    selectedRows?: T[];
+    onChangeSelectedRows?: (newSelection: T[]) => void;
   }
 
   /**

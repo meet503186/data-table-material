@@ -7,6 +7,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import {
   Button,
+  Checkbox,
   Paper,
   Stack,
   Toolbar,
@@ -22,6 +23,7 @@ import RenderRow from "./RenderRow";
 import DownloadIcon from "@mui/icons-material/Download";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ExportManager from "../utils/export-manager";
+import { useMemo } from "react";
 
 /**
  * A generic, reusable DataTable component for rendering tabular data with optional features
@@ -49,10 +51,10 @@ import ExportManager from "../utils/export-manager";
  *
  * @returns {React.JSX.Element} The rendered DataTable component.
  */
-const DataTable = <T extends Record<string, any>>({
+const DataTable = <T extends IDataTable.GenericRecord>({
   serialNumber,
   rows,
-  columns,
+  columns: _columns,
   pagination = false,
   paginationData,
   onChangePaginationData,
@@ -66,6 +68,9 @@ const DataTable = <T extends Record<string, any>>({
   size = "small",
   getLocalizedText,
   exportConfig = {},
+  rowSelection = false,
+  selectedRows,
+  onChangeSelectedRows,
   ...rest
 }: IDataTable.Props<T>): React.JSX.Element => {
   const theme = useTheme();
@@ -95,7 +100,59 @@ const DataTable = <T extends Record<string, any>>({
     );
   };
 
+  const handleChangeSelected =
+    (selectedRow: T) => (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.stopPropagation();
+
+      if (!selectedRows || !onChangeSelectedRows) return;
+
+      const isSelected = selectedRows.some((row) => row.id === selectedRow.id);
+      const newSelection = isSelected
+        ? selectedRows.filter((row) => row.id !== selectedRow.id)
+        : [...selectedRows, selectedRow];
+
+      onChangeSelectedRows(newSelection);
+    };
+
   const showExportButtons = exportConfig.csvEnabled || exportConfig.pdfEnabled;
+
+  const columns = useMemo(() => {
+    const _columnsData: IDataTable.Column<T>[] = [];
+
+    if (rowSelection) {
+      _columnsData.push({
+        _key: "selected",
+        label: "",
+        renderCell: (row) => {
+          return (
+            <Checkbox
+              disableRipple
+              sx={{
+                padding: 0,
+                borderRadius: 0,
+              }}
+              checked={selectedRows?.some(
+                (selectedRow) => selectedRow.id === row.id
+              )}
+              onClick={handleChangeSelected(row)}
+            />
+          );
+        },
+      });
+    }
+
+    if (serialNumber) {
+      _columnsData.push({ _key: "s.no.", label: "S. No." });
+    }
+
+    return [..._columnsData, ..._columns];
+  }, [selectedRows]);
+
+  if (rowSelection && rows.length && !rows[0].id) {
+    throw new Error(
+      "Unique id is required in each row to enable row selection!"
+    );
+  }
 
   return (
     <>
@@ -176,6 +233,17 @@ const DataTable = <T extends Record<string, any>>({
                   ></TableCell>
                 )}
 
+                {rowSelection && (
+                  <TableCell
+                    key={"selected"}
+                    sx={{
+                      minWidth: 80,
+                      width: 80,
+                      fontWeight: 600,
+                      borderBottom: `1px solid ${theme.palette.grey[300]}`,
+                    }}
+                  ></TableCell>
+                )}
                 {serialNumber && (
                   <TableCell
                     key={"s.no."}
@@ -192,50 +260,52 @@ const DataTable = <T extends Record<string, any>>({
                   </TableCell>
                 )}
 
-                {columns.map(({ _key, label, width, hidden, renderHeader }) => {
-                  if (hidden) return null;
+                {_columns.map(
+                  ({ _key, label, width, hidden, renderHeader }) => {
+                    if (hidden) return null;
 
-                  if (visibleColumns && !visibleColumns.includes(_key))
-                    return null;
+                    if (visibleColumns && !visibleColumns.includes(_key))
+                      return null;
 
-                  return (
-                    <Resizable>
-                      {({ ref }) => (
-                        <TableCell
-                          key={_key}
-                          sx={{
-                            whiteSpace: "nowrap",
-                            textOverflow: "ellipsis",
-                            overflow: "hidden",
-                            width: width ?? 150,
-                            fontWeight: 600,
-                            borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                          }}
-                        >
-                          {renderHeader
-                            ? renderHeader(rows[0])
-                            : getLocalizedText
-                            ? getLocalizedText(label)
-                            : label}
-                          <Typography
-                            className="resizer"
-                            component={"span"}
-                            ref={ref}
-                            color="primary"
+                    return (
+                      <Resizable>
+                        {({ ref }) => (
+                          <TableCell
+                            key={_key}
                             sx={{
-                              ":active": {
-                                background: theme.palette.primary.main,
-                              },
-                              ":hover": {
-                                background: theme.palette.primary.main,
-                              },
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
+                              overflow: "hidden",
+                              width: width ?? 150,
+                              fontWeight: 600,
+                              borderBottom: `1px solid ${theme.palette.grey[300]}`,
                             }}
-                          ></Typography>
-                        </TableCell>
-                      )}
-                    </Resizable>
-                  );
-                })}
+                          >
+                            {renderHeader
+                              ? renderHeader(rows[0])
+                              : getLocalizedText
+                              ? getLocalizedText(label)
+                              : label}
+                            <Typography
+                              className="resizer"
+                              component={"span"}
+                              ref={ref}
+                              color="primary"
+                              sx={{
+                                ":active": {
+                                  background: theme.palette.primary.main,
+                                },
+                                ":hover": {
+                                  background: theme.palette.primary.main,
+                                },
+                              }}
+                            ></Typography>
+                          </TableCell>
+                        )}
+                      </Resizable>
+                    );
+                  }
+                )}
 
                 {additionalColumns && (
                   <AdditonalColumnHeaders
@@ -262,11 +332,7 @@ const DataTable = <T extends Record<string, any>>({
                         : {}),
                       ...item,
                     }}
-                    columns={
-                      serialNumber
-                        ? [{ _key: "s.no.", label: "S. No." }, ...columns]
-                        : columns
-                    }
+                    columns={columns}
                     visibleColumns={visibleColumns}
                     additionalColumns={additionalColumns}
                     onClick={onRowClick}
