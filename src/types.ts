@@ -28,6 +28,8 @@ export namespace IDataTable {
      */
     columns: Column<T>[];
 
+    groups?: Group[];
+
     /**
      * Whether to enable pagination for the table.
      * @default false
@@ -126,7 +128,7 @@ export namespace IDataTable {
      * @param node - The row data for the cell.
      * @returns The rendered cell content.
      */
-    renderCell?: (node: T) => ReactNode | string;
+    renderCell?: (row: T, col: Column<T>) => ReactNode | string;
 
     /**
      * Function to render the header content.
@@ -162,6 +164,13 @@ export namespace IDataTable {
      * The title attribute for the column, which will display as a tooltip when hovering over the column's data.
      */
     title?: string;
+
+    groupId?: string;
+  }
+
+  export interface Group {
+    label: string;
+    id: string;
   }
 
   /**

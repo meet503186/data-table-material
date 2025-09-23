@@ -103,7 +103,7 @@ class ExportManager {
         let value = "";
 
         if (col.renderCell) {
-          const rendered = col.renderCell(row);
+          const rendered = col.renderCell(row, col);
           if (typeof rendered === "string" || typeof rendered === "number") {
             value = String(rendered);
           } else {

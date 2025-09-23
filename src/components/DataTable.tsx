@@ -1,9 +1,6 @@
 // ** MUI Imports
 import Table from "@mui/material/Table";
-import TableRow from "@mui/material/TableRow";
-import TableHead from "@mui/material/TableHead";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import {
   Button,
@@ -11,12 +8,9 @@ import {
   Paper,
   Stack,
   Toolbar,
-  Typography,
   useTheme,
 } from "@mui/material";
-import Resizable from "./Resizable";
 import { IDataTable } from "../types";
-import AdditonalColumnHeaders from "./AdditonalColumnHeaders";
 import CustomPagination from "./CustomPagination";
 import "./style.css";
 import RenderRow from "./RenderRow";
@@ -24,6 +18,9 @@ import DownloadIcon from "@mui/icons-material/Download";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ExportManager from "../utils/export-manager";
 import { useMemo } from "react";
+import { useGroupedColumns } from "../hooks/useGroupedColumns";
+import RenderHeaders from "./RenderHeaders";
+import RenderGroupHeaders from "./RenderGroupHeaders";
 
 /**
  * A generic, reusable DataTable component for rendering tabular data with optional features
@@ -51,28 +48,33 @@ import { useMemo } from "react";
  *
  * @returns {React.JSX.Element} The rendered DataTable component.
  */
-const DataTable = <T extends IDataTable.GenericRecord>({
-  serialNumber,
-  rows,
-  columns: _columns,
-  pagination = false,
-  paginationData,
-  onChangePaginationData,
-  additionalColumns,
-  onRowClick,
-  containerStyle = {},
-  paperStyle = {},
-  sx = {},
-  visibleColumns,
-  getExpandableTableConfig,
-  size = "small",
-  getLocalizedText,
-  exportConfig = {},
-  rowSelection = false,
-  selectedRows,
-  onChangeSelectedRows,
-  ...rest
-}: IDataTable.Props<T>): React.JSX.Element => {
+const DataTable = <T extends IDataTable.GenericRecord>(
+  props: IDataTable.Props<T>
+): React.JSX.Element => {
+  const {
+    serialNumber,
+    rows,
+    columns: _columns,
+    groups = [],
+    pagination = false,
+    paginationData,
+    onChangePaginationData,
+    additionalColumns,
+    onRowClick,
+    containerStyle = {},
+    paperStyle = {},
+    sx = {},
+    visibleColumns,
+    getExpandableTableConfig,
+    size = "small",
+    getLocalizedText,
+    exportConfig = {},
+    rowSelection = false,
+    selectedRows,
+    onChangeSelectedRows,
+    ...rest
+  } = props;
+
   const theme = useTheme();
 
   const handleExportCSV = () => {
@@ -148,6 +150,11 @@ const DataTable = <T extends IDataTable.GenericRecord>({
     return [..._columnsData, ..._columns];
   }, [selectedRows]);
 
+  const { groupWidths, updateColumnWidth } = useGroupedColumns(
+    _columns,
+    visibleColumns
+  );
+
   if (rowSelection && rows.length && !rows[0].id) {
     throw new Error(
       "Unique id is required in each row to enable row selection!"
@@ -220,101 +227,10 @@ const DataTable = <T extends IDataTable.GenericRecord>({
             aria-label="collapsible table"
             {...rest}
           >
-            <TableHead>
-              <TableRow>
-                {getExpandableTableConfig && (
-                  <TableCell
-                    sx={{
-                      minWidth: 80,
-                      width: 80,
-                      fontWeight: 600,
-                      borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                    }}
-                  ></TableCell>
-                )}
-
-                {rowSelection && (
-                  <TableCell
-                    key={"selected"}
-                    sx={{
-                      minWidth: 80,
-                      width: 80,
-                      fontWeight: 600,
-                      borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                    }}
-                  ></TableCell>
-                )}
-                {serialNumber && (
-                  <TableCell
-                    key={"s.no."}
-                    sx={{
-                      minWidth: 80,
-                      width: 80,
-                      fontWeight: 600,
-                      borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                    }}
-                  >
-                    {getLocalizedText
-                      ? getLocalizedText("serialNumber")
-                      : "S. No."}
-                  </TableCell>
-                )}
-
-                {_columns.map(
-                  ({ _key, label, width, hidden, renderHeader }) => {
-                    if (hidden) return null;
-
-                    if (visibleColumns && !visibleColumns.includes(_key))
-                      return null;
-
-                    return (
-                      <Resizable>
-                        {({ ref }) => (
-                          <TableCell
-                            key={_key}
-                            sx={{
-                              whiteSpace: "nowrap",
-                              textOverflow: "ellipsis",
-                              overflow: "hidden",
-                              width: width ?? 150,
-                              fontWeight: 600,
-                              borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                            }}
-                          >
-                            {renderHeader
-                              ? renderHeader(rows[0])
-                              : getLocalizedText
-                              ? getLocalizedText(label)
-                              : label}
-                            <Typography
-                              className="resizer"
-                              component={"span"}
-                              ref={ref}
-                              color="primary"
-                              sx={{
-                                ":active": {
-                                  background: theme.palette.primary.main,
-                                },
-                                ":hover": {
-                                  background: theme.palette.primary.main,
-                                },
-                              }}
-                            ></Typography>
-                          </TableCell>
-                        )}
-                      </Resizable>
-                    );
-                  }
-                )}
-
-                {additionalColumns && (
-                  <AdditonalColumnHeaders
-                    getLocalizedText={getLocalizedText}
-                    data={additionalColumns}
-                  />
-                )}
-              </TableRow>
-            </TableHead>
+            {!!groups.length && (
+              <RenderGroupHeaders {...props} groupWidths={groupWidths} />
+            )}
+            <RenderHeaders {...props} updateColumnWidth={updateColumnWidth} />
             <TableBody>
               {rows.map((item: T, index: number) => {
                 return (

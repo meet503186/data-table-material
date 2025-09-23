@@ -17,8 +17,10 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
  * </Resizable>
  */
 const Resizable = ({
+  updateColumnWidth,
   children,
 }: {
+  updateColumnWidth: (field: string, newWidth: number) => void;
   children: ({ ref }: { ref: (nodeEle: HTMLElement) => void }) => ReactNode;
 }): ReactNode => {
   const [node, setNode] = useState<HTMLElement | null>(null);
@@ -46,6 +48,9 @@ const Resizable = ({
         const newWidth = startWidth + dx;
         parent.style.width = `${newWidth}px`;
         parent.style.minWidth = `${newWidth}px`;
+
+        const field = parent.getAttribute("data-field");
+        field && updateColumnWidth(field, newWidth);
 
         updateCursor();
       };

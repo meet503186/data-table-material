@@ -1,5 +1,6 @@
 import { SxProps, TableCell, TableProps } from "@mui/material";
 import { IDataTable } from "../types";
+import { DEFAULT_COL_WIDTH } from "../constants";
 
 const RenderColumns = <T extends IDataTable.GenericRecord>({
   columns,
@@ -17,7 +18,8 @@ const RenderColumns = <T extends IDataTable.GenericRecord>({
 }) => {
   return (
     <>
-      {columns.map(({ renderCell, width, _key, hidden, sx, title }) => {
+      {columns.map((col) => {
+        const { _key, width, hidden, sx, title, renderCell } = col;
         if (hidden) return null;
 
         if (visibleColumns && !visibleColumns.includes(_key)) return null;
@@ -27,7 +29,7 @@ const RenderColumns = <T extends IDataTable.GenericRecord>({
             ? getLocalizedText(title)
             : title
           : _key && renderCell
-          ? renderCell(item)
+          ? renderCell(item, col)
           : item[_key];
 
         return (
@@ -40,11 +42,11 @@ const RenderColumns = <T extends IDataTable.GenericRecord>({
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
               overflow: "hidden",
-              maxWidth: width ?? 150,
+              maxWidth: width ?? DEFAULT_COL_WIDTH,
               ...(sx || {}),
             }}
           >
-            {renderCell ? renderCell(item) : item[_key]}
+            {renderCell ? renderCell(item, col) : item[_key]}
           </TableCell>
         );
       })}
