@@ -21,6 +21,8 @@ import { useMemo } from "react";
 import { useGroupedColumns } from "../hooks/useGroupedColumns";
 import RenderHeaders from "./RenderHeaders";
 import RenderGroupHeaders from "./RenderGroupHeaders";
+import { getSerialNumber } from "../utils/helper";
+import { SERIAL_NUMBER_COLUMN } from "../constants";
 
 /**
  * A generic, reusable DataTable component for rendering tabular data with optional features
@@ -82,8 +84,11 @@ const DataTable = <T extends IDataTable.GenericRecord>(
       {
         rows,
         columns,
+        groups,
         filename: exportConfig.filename || "table-export",
         getLocalizedText,
+        paginationData,
+        serialNumber,
       },
       exportConfig.dateTimeStamp
     );
@@ -94,9 +99,12 @@ const DataTable = <T extends IDataTable.GenericRecord>(
       {
         rows,
         columns,
+        groups,
         filename: exportConfig.filename || "table-export",
         title: exportConfig.title || "Table Export",
         getLocalizedText,
+        paginationData,
+        serialNumber,
       },
       exportConfig.dateTimeStamp
     );
@@ -144,7 +152,7 @@ const DataTable = <T extends IDataTable.GenericRecord>(
     }
 
     if (serialNumber) {
-      _columnsData.push({ _key: "s.no.", label: "S. No." });
+      _columnsData.push(SERIAL_NUMBER_COLUMN);
     }
 
     return [..._columnsData, ..._columns];
@@ -239,11 +247,7 @@ const DataTable = <T extends IDataTable.GenericRecord>(
                     row={{
                       ...(serialNumber
                         ? {
-                            "s.no.": !!paginationData
-                              ? paginationData.pageSize *
-                                  (paginationData.pageNo - 1) +
-                                (index + 1)
-                              : index + 1,
+                            "s.no.": getSerialNumber({ paginationData, index }),
                           }
                         : {}),
                       ...item,

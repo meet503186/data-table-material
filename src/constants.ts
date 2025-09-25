@@ -6,3 +6,5 @@ export const fixedCellStyle = {
   fontWeight: 600,
   borderBottom: (theme: any) => `1px solid ${theme.palette.grey[300]}`,
 };
+
+export const SERIAL_NUMBER_COLUMN = { _key: "s.no.", label: "S. No." };
