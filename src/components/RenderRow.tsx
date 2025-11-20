@@ -44,7 +44,7 @@ const RenderRow = <T extends IDataTable.GenericRecord>({
           position: "relative",
           zIndex: 1,
         }}
-        tabIndex={0}
+        tabIndex={onClick ? 0 : -1}
         onClick={() => onClick?.(row)}
         onKeyDown={handleA11yKeyDown(() => onClick?.(row))}
       >
