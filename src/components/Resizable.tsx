@@ -50,7 +50,7 @@ const Resizable = ({
         parent.style.minWidth = `${newWidth}px`;
 
         const field = parent.getAttribute("data-field");
-        field && updateColumnWidth(field, newWidth);
+        if (field) updateColumnWidth(field, newWidth);
 
         updateCursor();
       };
@@ -61,10 +61,12 @@ const Resizable = ({
         resetCursor();
       };
 
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("mousemove", handleMouseMove, {
+        passive: true,
+      });
+      document.addEventListener("mouseup", handleMouseUp, { passive: true });
     },
-    [node]
+    [node, updateColumnWidth]
   );
 
   const handleTouchStart = useCallback(
@@ -100,8 +102,10 @@ const Resizable = ({
         resetCursor();
       };
 
-      document.addEventListener("touchmove", handleTouchMove);
-      document.addEventListener("touchend", handleTouchEnd);
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: true,
+      });
+      document.addEventListener("touchend", handleTouchEnd, { passive: true });
     },
     [node]
   );
@@ -121,14 +125,14 @@ const Resizable = ({
       return;
     }
 
-    node.addEventListener("mousedown", handleMouseDown);
-    node.addEventListener("touchstart", handleTouchStart);
+    node.addEventListener("mousedown", handleMouseDown, { passive: true });
+    node.addEventListener("touchstart", handleTouchStart, { passive: true });
 
     return () => {
       node.removeEventListener("mousedown", handleMouseDown);
       node.removeEventListener("touchstart", handleTouchStart);
     };
-  }, [node]);
+  }, [handleMouseDown, handleTouchStart, node]);
 
   return children({ ref });
 };

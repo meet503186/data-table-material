@@ -17,7 +17,7 @@ import RenderRow from "./RenderRow";
 import DownloadIcon from "@mui/icons-material/Download";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ExportManager from "../utils/export-manager";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useGroupedColumns } from "../hooks/useGroupedColumns";
 import RenderHeaders from "./RenderHeaders";
 import RenderGroupHeaders from "./RenderGroupHeaders";
@@ -110,7 +110,7 @@ const DataTable = <T extends IDataTable.GenericRecord>(
     );
   };
 
-  const handleChangeSelected =
+  const handleChangeSelected = useCallback(
     (selectedRow: T) => (event: React.MouseEvent<HTMLButtonElement>) => {
       event.stopPropagation();
 
@@ -122,7 +122,9 @@ const DataTable = <T extends IDataTable.GenericRecord>(
         : [...selectedRows, selectedRow];
 
       onChangeSelectedRows(newSelection);
-    };
+    },
+    [onChangeSelectedRows, selectedRows]
+  );
 
   const showExportButtons = exportConfig.csvEnabled || exportConfig.pdfEnabled;
 
@@ -136,7 +138,6 @@ const DataTable = <T extends IDataTable.GenericRecord>(
         renderCell: (row) => {
           return (
             <Checkbox
-              disableRipple
               sx={{
                 padding: 0,
                 borderRadius: 0,
@@ -144,6 +145,7 @@ const DataTable = <T extends IDataTable.GenericRecord>(
               checked={selectedRows?.some(
                 (selectedRow) => selectedRow.id === row.id
               )}
+              onKeyDown={(e) => e.stopPropagation()}
               onClick={handleChangeSelected(row)}
             />
           );
@@ -156,7 +158,13 @@ const DataTable = <T extends IDataTable.GenericRecord>(
     }
 
     return [..._columnsData, ..._columns];
-  }, [selectedRows]);
+  }, [
+    _columns,
+    handleChangeSelected,
+    rowSelection,
+    selectedRows,
+    serialNumber,
+  ]);
 
   const { groupWidths, updateColumnWidth } = useGroupedColumns(
     _columns,

@@ -13,3 +13,14 @@ export function getSerialNumber({
 
   return index + 1;
 }
+
+export const handleA11yKeyDown =
+  (callback: (args?: unknown) => void) => (event: React.KeyboardEvent) => {
+    if (!callback) return;
+
+    if (event.code === "Space" || event.code === "Enter") {
+      event.preventDefault();
+      event.stopPropagation();
+      callback(event);
+    }
+  };

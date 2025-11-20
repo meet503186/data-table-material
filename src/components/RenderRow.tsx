@@ -6,6 +6,7 @@ import AdditionalColumnRows from "./AdditonalColumnRows";
 import { useState } from "react";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { handleA11yKeyDown } from "../utils/helper";
 
 const RenderRow = <T extends IDataTable.GenericRecord>({
   row,
@@ -39,10 +40,13 @@ const RenderRow = <T extends IDataTable.GenericRecord>({
         sx={{
           "&:last-of-type td, &:last-of-type th": { border: 0 },
           cursor: onClick ? "pointer" : "default",
+          ":focus": { outline: "1px solid" },
+          position: "relative",
+          zIndex: 1,
         }}
-        onClick={() => {
-          onClick && onClick(row);
-        }}
+        tabIndex={0}
+        onClick={() => onClick?.(row)}
+        onKeyDown={handleA11yKeyDown(() => onClick?.(row))}
       >
         {getExpandableTableConfig && (
           <RenderColumns

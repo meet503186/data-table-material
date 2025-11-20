@@ -20,7 +20,7 @@ export function useGroupedColumns<T extends IDataTable.GenericRecord>(
   useEffect(() => {
     setGroupWidths(calculateGroupsWidth(initialColumns, visibleColumns));
     columnsRef.current = initialColumns;
-  }, [initialColumns]);
+  }, [initialColumns, visibleColumns]);
 
   const updateColumnWidth = (
     field: string,
@@ -44,8 +44,8 @@ export function useGroupedColumns<T extends IDataTable.GenericRecord>(
   return { groupWidths, updateColumnWidth };
 }
 
-function calculateGroupsWidth(
-  columns: IDataTable.Column<any>[],
+function calculateGroupsWidth<T extends IDataTable.GenericRecord>(
+  columns: IDataTable.Column<T>[],
   visibleColumns?: string[]
 ) {
   const widths: IDataTable.GenericRecord = {};

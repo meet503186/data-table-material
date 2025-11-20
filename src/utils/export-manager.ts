@@ -1,3 +1,4 @@
+import { TableCellProps } from "@mui/material";
 import { IDataTable } from "../types";
 import { getSerialNumber } from "./helper";
 
@@ -28,13 +29,15 @@ class ExportManager {
     } = this.getExportData(config, dateTimeStamp);
 
     // Convert dynamic colSpan to CSV row
-    const groupHeaderRow: string[] = groupHeaders.flatMap((cell: any) => {
-      const span = cell.colSpan || 1;
-      return [cell.content, ...Array(span - 1).fill("")]; // Fill empty for colspan
-    });
+    const groupHeaderRow: string[] = groupHeaders.flatMap(
+      (cell: TableCellProps) => {
+        const span = cell.colSpan || 1;
+        return [cell.content, ...Array(span - 1).fill("")]; // Fill empty for colspan
+      }
+    );
 
     // Escape CSV cells
-    const escapeCell = (cell: any) =>
+    const escapeCell = (cell: string) =>
       `"${(cell ?? "").toString().replace(/"/g, '""')}"`;
 
     const csvContent = (
@@ -141,7 +144,7 @@ class ExportManager {
       (col) => getLocalizedText?.(col.label) || col.label
     );
     const groupHeadersMap = new Map<string, IDataTable.GenericRecord>();
-    groups?.length &&
+    if (groups?.length) {
       visibleColumns.forEach((col) => {
         if (!col.groupId) {
           groupHeadersMap.set(col._key, { content: "", colSpan: 1 });
@@ -165,6 +168,7 @@ class ExportManager {
           }
         }
       });
+    }
 
     const groupHeaders = Array.from(groupHeadersMap.values());
 

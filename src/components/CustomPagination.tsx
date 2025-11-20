@@ -1,10 +1,11 @@
 import { TablePagination, Typography } from "@mui/material";
 import { IDataTable } from "../types";
+// import { handleA11yKeyDown } from "../utils/helper";
 
 interface IProps {
   paginationData: IDataTable.Pagination;
   onChangePaginationData: (data: Partial<IDataTable.Pagination>) => void;
-  getLocalizedText?: IDataTable.Props<any>["getLocalizedText"];
+  getLocalizedText?: IDataTable.Props<object>["getLocalizedText"];
   hideRowsPerPage?: boolean;
 }
 
@@ -42,11 +43,16 @@ const CustomPagination = ({
 }: IProps) => {
   const { pageNo, pageSize, totalRecords } = paginationData;
 
-  const onPageChange = (_: any, value: any) => {
-    onChangePaginationData({ pageNo: value + 1, pageSize });
+  const onPageChange = (
+    _: React.MouseEvent<HTMLButtonElement> | null,
+    page: number
+  ) => {
+    onChangePaginationData({ pageNo: page + 1, pageSize });
   };
 
-  const onRowsPerPageChange = (e: any) => {
+  const onRowsPerPageChange: React.ChangeEventHandler<
+    HTMLTextAreaElement | HTMLInputElement
+  > = (e) => {
     onChangePaginationData({ pageSize: +e.target.value, pageNo: 1 });
   };
 

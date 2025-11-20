@@ -58,6 +58,7 @@ const AdditionalColumnRows = <T extends IDataTable.GenericRecord>({
                 size="small"
                 checked={!!item[_key]}
                 disabled={isDisabled}
+                onKeyDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation();
                   onClick(item);
@@ -70,6 +71,7 @@ const AdditionalColumnRows = <T extends IDataTable.GenericRecord>({
               <IconButton
                 size="small"
                 disabled={isDisabled}
+                onKeyDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation();
                   onClick(item);
