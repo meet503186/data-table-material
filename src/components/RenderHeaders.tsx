@@ -4,26 +4,50 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TableSortLabel,
   Typography,
   useTheme,
 } from "@mui/material";
-import { DEFAULT_COL_WIDTH, fixedCellStyle } from "../constants";
-import AdditonalColumnHeaders from "./AdditonalColumnHeaders";
+import { DEFAULT_COL_WIDTH } from "../constants";
+import AdditionalColumnHeaders from "./AdditionalColumnHeaders";
+import { useCallback, useMemo } from "react";
+import { getPinnedStyles, usePinnedColumns } from "../hooks/usePinnedColumns";
 
 const RenderHeaders = <T extends IDataTable.GenericRecord>({
   getExpandableTableConfig,
-  rowSelection,
-  serialNumber,
   rows,
   columns,
   visibleColumns,
   additionalColumns,
   getLocalizedText,
   updateColumnWidth,
+  sortConfig,
 }: IDataTable.Props<T> & {
   updateColumnWidth: (field: string, newWidth: number) => void;
 }) => {
   const theme = useTheme();
+
+  const { orderBy, order, onSort } = (sortConfig ||
+    {}) as IDataTable.SortConfig;
+
+  const { leftPinnedPositions, rightPinnedPositions } =
+    usePinnedColumns(columns);
+
+  const visibleColumnsSet = useMemo(
+    () => (visibleColumns ? new Set(visibleColumns) : null),
+    [visibleColumns]
+  );
+
+  const handleSort = useCallback(
+    (column: string) => {
+      const isAsc = orderBy === column && order === "asc";
+      const newOrder = isAsc ? "desc" : "asc";
+
+      onSort?.(column, newOrder);
+    },
+    [orderBy, order, onSort]
+  );
+
   return (
     <TableHead>
       <TableRow>
@@ -38,63 +62,104 @@ const RenderHeaders = <T extends IDataTable.GenericRecord>({
           ></TableCell>
         )}
 
-        {rowSelection && (
-          <TableCell key={"selected"} sx={fixedCellStyle}></TableCell>
-        )}
-        {serialNumber && (
-          <TableCell key={"s.no."} sx={fixedCellStyle}>
-            {getLocalizedText ? getLocalizedText("serialNumber") : "S. No."}
-          </TableCell>
-        )}
+        {columns.map(
+          ({
+            _key,
+            label,
+            sx,
+            width,
+            hidden,
+            pinned,
+            resizable,
+            sortable,
+            renderHeader,
+          }) => {
+            // Skip hidden columns
+            if (hidden) return null;
 
-        {columns.map(({ _key, label, width, hidden, renderHeader }) => {
-          if (hidden) return null;
+            // Skip columns not in visible list
+            if (visibleColumnsSet && !visibleColumnsSet.has(_key)) return null;
 
-          if (visibleColumns && !visibleColumns.includes(_key)) return null;
+            const isResizable = resizable !== false;
 
-          return (
-            <Resizable updateColumnWidth={updateColumnWidth}>
-              {({ ref }) => (
-                <TableCell
-                  key={_key}
-                  data-field={_key}
-                  sx={{
-                    position: "relative",
-                    whiteSpace: "nowrap",
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    width: width ?? DEFAULT_COL_WIDTH,
-                    fontWeight: 600,
-                    borderBottom: `1px solid ${theme.palette.grey[300]}`,
-                  }}
-                >
-                  {renderHeader
-                    ? renderHeader(rows[0])
-                    : getLocalizedText
-                    ? getLocalizedText(label)
-                    : label}
-                  <Typography
-                    className="resizer"
-                    component={"span"}
-                    ref={ref}
-                    color="primary"
+            const children = renderHeader
+              ? renderHeader(rows[0])
+              : getLocalizedText
+              ? getLocalizedText(label)
+              : label;
+
+            // Calculate pinned styles
+            const pinnedStyles = getPinnedStyles(
+              pinned,
+              _key,
+              leftPinnedPositions,
+              rightPinnedPositions,
+              theme.palette.background.default
+            );
+
+            return (
+              <Resizable
+                key={_key}
+                updateColumnWidth={updateColumnWidth}
+                resizable={isResizable}
+              >
+                {({ ref }) => (
+                  <TableCell
+                    data-field={_key}
                     sx={{
-                      ":active": {
-                        background: theme.palette.primary.main,
-                      },
-                      ":hover": {
-                        background: theme.palette.primary.main,
-                      },
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                      overflow: "hidden",
+                      minWidth: width ?? DEFAULT_COL_WIDTH,
+                      maxWidth: width ?? DEFAULT_COL_WIDTH,
+                      width: width ?? DEFAULT_COL_WIDTH,
+                      fontWeight: 600,
+                      borderBottom: `1px solid ${theme.palette.grey[300]}`,
+                      ...sx,
+                      ...pinnedStyles,
                     }}
-                  ></Typography>
-                </TableCell>
-              )}
-            </Resizable>
-          );
-        })}
+                    sortDirection={orderBy === _key ? order : false}
+                  >
+                    {sortable ? (
+                      <TableSortLabel
+                        active={orderBy === _key}
+                        direction={orderBy === _key ? order : "asc"}
+                        onClick={() => handleSort(_key)}
+                      >
+                        {children}
+                      </TableSortLabel>
+                    ) : (
+                      children
+                    )}
+
+                    <Typography
+                      className="resizer"
+                      component={"span"}
+                      ref={ref}
+                      color="primary"
+                      sx={{
+                        ":active": {
+                          background: isResizable
+                            ? theme.palette.primary.main
+                            : "",
+                        },
+                        ":hover": {
+                          background: isResizable
+                            ? theme.palette.primary.main
+                            : "",
+                        },
+                        cursor: isResizable ? "col-resize" : "default",
+                      }}
+                    ></Typography>
+                  </TableCell>
+                )}
+              </Resizable>
+            );
+          }
+        )}
 
         {additionalColumns && (
-          <AdditonalColumnHeaders
+          <AdditionalColumnHeaders
             getLocalizedText={getLocalizedText}
             data={additionalColumns}
           />

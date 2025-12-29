@@ -17,9 +17,11 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
  * </Resizable>
  */
 const Resizable = ({
+  resizable = true,
   updateColumnWidth,
   children,
 }: {
+  resizable?: boolean;
   updateColumnWidth: (field: string, newWidth: number) => void;
   children: ({ ref }: { ref: (nodeEle: HTMLElement) => void }) => ReactNode;
 }): ReactNode => {
@@ -121,7 +123,7 @@ const Resizable = ({
   };
 
   useEffect(() => {
-    if (!node) {
+    if (!node || !resizable) {
       return;
     }
 
@@ -132,7 +134,7 @@ const Resizable = ({
       node.removeEventListener("mousedown", handleMouseDown);
       node.removeEventListener("touchstart", handleTouchStart);
     };
-  }, [handleMouseDown, handleTouchStart, node]);
+  }, [handleMouseDown, handleTouchStart, node, resizable]);
 
   return children({ ref });
 };

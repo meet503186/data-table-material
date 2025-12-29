@@ -74,6 +74,7 @@ const DataTable = <T extends IDataTable.GenericRecord>(
     rowSelection = false,
     selectedRows,
     onChangeSelectedRows,
+    sortConfig,
     ...rest
   } = props;
 
@@ -166,16 +167,15 @@ const DataTable = <T extends IDataTable.GenericRecord>(
     serialNumber,
   ]);
 
-  const { groupWidths, updateColumnWidth } = useGroupedColumns(
-    _columns,
-    visibleColumns
-  );
+  const {
+    groupWidths,
+    columns: updatedColumns,
+    updateColumnWidth,
+  } = useGroupedColumns(columns, visibleColumns);
 
-  if (rowSelection && rows.length && !rows[0].id) {
-    throw new Error(
-      "Unique id is required in each row to enable row selection!"
-    );
-  }
+  // if (rows[0] && !rows[0].id) {
+  //   throw new Error("Unique id is required in each row!");
+  // }
 
   return (
     <>
@@ -246,12 +246,17 @@ const DataTable = <T extends IDataTable.GenericRecord>(
             {!!groups.length && (
               <RenderGroupHeaders {...props} groupWidths={groupWidths} />
             )}
-            <RenderHeaders {...props} updateColumnWidth={updateColumnWidth} />
+            <RenderHeaders
+              {...props}
+              columns={updatedColumns}
+              updateColumnWidth={updateColumnWidth}
+              sortConfig={sortConfig}
+            />
             <TableBody>
               {rows.map((item: T, index: number) => {
                 return (
                   <RenderRow
-                    key={index}
+                    key={item.id || index}
                     row={{
                       ...(serialNumber
                         ? {
@@ -260,7 +265,7 @@ const DataTable = <T extends IDataTable.GenericRecord>(
                         : {}),
                       ...item,
                     }}
-                    columns={columns}
+                    columns={updatedColumns}
                     visibleColumns={visibleColumns}
                     additionalColumns={additionalColumns}
                     onClick={onRowClick}

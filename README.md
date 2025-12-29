@@ -124,7 +124,7 @@ Use `paginationData` to pass current pagination info and `onChangePaginationData
 
 - ✅ `Resizable`: For resizable columns
 - 🧩 `RenderRow`: Custom row renderer
-- 📌 `AdditonalColumnHeaders`: Handles header rendering for additional columns
+- 📌 `AdditionalColumnHeaders`: Handles header rendering for additional columns
 - 📚 `CustomPagination`: External pagination component
 
 ---
@@ -168,7 +168,7 @@ data-table-material/
 │   ├── RenderRow.tsx
 │   ├── Resizable.tsx
 │   ├── CustomPagination.tsx
-│   └── AdditonalColumnHeaders.tsx
+│   └── AdditionalColumnHeaders.tsx
 ├── types/
 │   └── index.ts
 ├── style.css

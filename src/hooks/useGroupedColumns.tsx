@@ -4,6 +4,7 @@ import { DEFAULT_COL_WIDTH } from "../constants";
 
 interface UseGroupedColumnsReturn<T extends IDataTable.GenericRecord> {
   groupWidths: Record<string, number>;
+  columns: IDataTable.Column<T>[];
   updateColumnWidth: (
     field: string,
     newWidth: number
@@ -41,7 +42,7 @@ export function useGroupedColumns<T extends IDataTable.GenericRecord>(
     return updatedColumns;
   };
 
-  return { groupWidths, updateColumnWidth };
+  return { groupWidths, updateColumnWidth, columns: columnsRef.current };
 }
 
 function calculateGroupsWidth<T extends IDataTable.GenericRecord>(

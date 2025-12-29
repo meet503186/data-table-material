@@ -95,6 +95,7 @@ export interface Props<T extends GenericRecord> extends TableProps {
   rowSelection?: boolean;
   selectedRows?: T[];
   onChangeSelectedRows?: (newSelection: T[]) => void;
+  sortConfig?: SortConfig;
 }
 
 /**
@@ -163,6 +164,12 @@ export interface Column<T extends GenericRecord> {
   title?: string;
 
   groupId?: string;
+
+  pinned?: "left" | "right";
+
+  resizable?: boolean;
+
+  sortable?: boolean;
 }
 
 export interface Group {
@@ -276,4 +283,12 @@ export interface ExportConfig {
   csvEnabled?: boolean;
   pdfEnabled?: boolean;
   dateTimeStamp?: boolean;
+}
+
+export type Order = "asc" | "desc";
+
+export interface SortConfig {
+  orderBy: string;
+  order: Order;
+  onSort: (column: string, order: Order) => void;
 }

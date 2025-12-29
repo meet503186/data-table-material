@@ -2,7 +2,7 @@ import { Box, Collapse, IconButton, TableCell, TableRow } from "@mui/material";
 
 import RenderColumns from "./RenderColumns";
 import { IDataTable } from "../types";
-import AdditionalColumnRows from "./AdditonalColumnRows";
+import AdditionalColumnRows from "./AdditionalColumnRows";
 import { useState } from "react";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -53,7 +53,7 @@ const RenderRow = <T extends IDataTable.GenericRecord>({
             size={size}
             columns={[
               {
-                _key: "collapse",
+                _key: "collapse" + row.id,
                 label: "",
                 title: open ? "collapse" : "expand",
                 renderCell: () => {
