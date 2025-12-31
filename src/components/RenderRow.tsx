@@ -1,7 +1,7 @@
 import { Box, Collapse, IconButton, TableCell, TableRow } from "@mui/material";
 
 import RenderColumns from "./RenderColumns";
-import { IDataTable } from "../types";
+import { IDataTable } from "../types/index";
 import AdditionalColumnRows from "./AdditionalColumnRows";
 import { useState } from "react";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -17,6 +17,7 @@ const RenderRow = <T extends IDataTable.GenericRecord>({
   getExpandableTableConfig,
   size = "small",
   getLocalizedText,
+  hover = true,
 }: {
   row: T;
   columns: IDataTable.Column<T>[];
@@ -26,6 +27,7 @@ const RenderRow = <T extends IDataTable.GenericRecord>({
   getExpandableTableConfig: IDataTable.Props<T>["getExpandableTableConfig"];
   size?: IDataTable.Props<T>["size"];
   getLocalizedText?: IDataTable.Props<T>["getLocalizedText"];
+  hover?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -36,11 +38,11 @@ const RenderRow = <T extends IDataTable.GenericRecord>({
   return (
     <>
       <TableRow
-        hover
+        hover={hover}
         sx={{
           "&:last-of-type td, &:last-of-type th": { border: 0 },
           cursor: onClick ? "pointer" : "default",
-          ":focus": { outline: "1px solid" },
+          ":focus-visible": { outline: "1px solid" },
           position: "relative",
           zIndex: 1,
         }}

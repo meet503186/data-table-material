@@ -1,6 +1,5 @@
 import { TablePagination, Typography } from "@mui/material";
-import { IDataTable } from "../types";
-// import { handleA11yKeyDown } from "../utils/helper";
+import { IDataTable } from "../types/index";
 
 interface IProps {
   paginationData: IDataTable.Pagination;
@@ -81,6 +80,9 @@ const CustomPagination = ({
         slotProps={{
           toolbar: {
             sx: { p: 0 },
+          },
+          select: {
+            sx: { marginRight: { xs: "8px", md: "32px" } },
           },
         }}
       />

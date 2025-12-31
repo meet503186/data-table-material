@@ -1,5 +1,5 @@
 import { SxProps, TableCell, TableProps, useTheme } from "@mui/material";
-import { IDataTable } from "../types";
+import { IDataTable } from "../types/index";
 import { DEFAULT_COL_WIDTH } from "../constants";
 import { useMemo } from "react";
 import { getPinnedStyles, usePinnedColumns } from "../hooks/usePinnedColumns";
@@ -72,6 +72,7 @@ const RenderColumns = <T extends IDataTable.GenericRecord>({
               minWidth: width ?? DEFAULT_COL_WIDTH,
               maxWidth: width ?? DEFAULT_COL_WIDTH,
               width: width ?? DEFAULT_COL_WIDTH,
+              borderBottom: `1px solid ${theme.palette.grey[300]}`,
               ...(sx || {}),
               ...pinnedStyles,
             }}

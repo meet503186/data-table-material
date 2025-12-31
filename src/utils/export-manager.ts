@@ -1,5 +1,5 @@
 import { TableCellProps } from "@mui/material";
-import { IDataTable } from "../types";
+import { IDataTable } from "../types/index";
 import { getSerialNumber } from "./helper";
 
 export interface IExportData<T extends IDataTable.GenericRecord> {

@@ -1,4 +1,4 @@
-import { IDataTable } from "../types";
+import { IDataTable } from "../types/index";
 
 export function getSerialNumber({
   paginationData,

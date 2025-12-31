@@ -1,5 +1,5 @@
 import { TableCell, TableProps, useTheme } from "@mui/material";
-import { IDataTable } from "../types";
+import { IDataTable } from "../types/index";
 
 /**
  * A React functional component that renders additional column headers for a data table.
@@ -18,7 +18,7 @@ import { IDataTable } from "../types";
  * - Each visible column header is styled with a minimum width, bold font weight, and a bottom border.
  * - The `label` property of each column is used as the key for the `TableCell` element.
  */
-const AdditonalColumnHeaders = <T extends IDataTable.GenericRecord>({
+const AdditionalColumnHeaders = <T extends IDataTable.GenericRecord>({
   data,
   size = "small",
   getLocalizedText,
@@ -52,4 +52,4 @@ const AdditonalColumnHeaders = <T extends IDataTable.GenericRecord>({
   });
 };
 
-export default AdditonalColumnHeaders;
+export default AdditionalColumnHeaders;

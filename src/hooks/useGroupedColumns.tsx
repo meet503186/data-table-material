@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { IDataTable } from "../types";
+import { IDataTable } from "../types/index";
 import { DEFAULT_COL_WIDTH } from "../constants";
 
 interface UseGroupedColumnsReturn<T extends IDataTable.GenericRecord> {

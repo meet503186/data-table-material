@@ -1,6 +1,8 @@
 import { TableCell, TableHead, TableRow, useTheme } from "@mui/material";
-import { IDataTable } from "../types";
+import { IDataTable } from "../types/index";
 import { DEFAULT_COL_WIDTH, fixedCellStyle } from "../constants";
+import { getPinnedStyles, usePinnedColumns } from "../hooks/usePinnedColumns";
+import { useMemo } from "react";
 
 const RenderGroupHeaders = <T extends IDataTable.GenericRecord>({
   rowSelection,
@@ -12,13 +14,22 @@ const RenderGroupHeaders = <T extends IDataTable.GenericRecord>({
   visibleColumns,
 }: IDataTable.Props<T> & { groupWidths: IDataTable.GenericRecord }) => {
   const theme = useTheme();
+
+  const { leftPinnedPositions, rightPinnedPositions, hasPinnedCols } =
+    usePinnedColumns(columns);
+
+  const visibleColumnsSet = useMemo(
+    () => (visibleColumns ? new Set(visibleColumns) : null),
+    [visibleColumns]
+  );
+
   return (
     <TableHead>
       <TableRow>
         {rowSelection && <TableCell sx={fixedCellStyle}></TableCell>}
         {serialNumber && <TableCell sx={fixedCellStyle}></TableCell>}
 
-        {columns.map(({ _key, groupId }, colIndex) => {
+        {columns.map(({ _key, groupId, pinned }, colIndex) => {
           const group = groupId ? groups.find((g) => g.id === groupId) : null;
 
           const firstIndexOfGroup = columns.findIndex(
@@ -28,6 +39,9 @@ const RenderGroupHeaders = <T extends IDataTable.GenericRecord>({
           if (colIndex !== firstIndexOfGroup && groupId) {
             return null;
           }
+
+          // Skip columns not in visible list
+          if (visibleColumnsSet && !visibleColumnsSet.has(_key)) return null;
 
           const colSpan = groupId
             ? columns.filter((c) => {
@@ -42,6 +56,15 @@ const RenderGroupHeaders = <T extends IDataTable.GenericRecord>({
               }).length
             : 1;
 
+          // Calculate pinned styles
+          const pinnedStyles = getPinnedStyles(
+            pinned,
+            _key,
+            leftPinnedPositions,
+            rightPinnedPositions,
+            theme.palette.background.default
+          );
+
           return (
             <TableCell
               key={_key}
@@ -49,11 +72,12 @@ const RenderGroupHeaders = <T extends IDataTable.GenericRecord>({
               colSpan={colSpan}
               sx={{
                 ...(!!groupId && {
-                  borderColor: theme.palette.grey[300],
-                  borderStyle: "solid",
-                  borderWidth: "2px",
-
-                  borderTopWidth: 0,
+                  ...(!hasPinnedCols && {
+                    borderColor: theme.palette.grey[300],
+                    borderStyle: "solid",
+                    borderWidth: "2px",
+                    borderTopWidth: 0,
+                  }),
                   textAlign: "center",
                 }),
                 ...{
@@ -62,6 +86,8 @@ const RenderGroupHeaders = <T extends IDataTable.GenericRecord>({
                   borderBottom: `1px solid ${theme.palette.grey[300]}`,
                   padding: 0,
                 },
+                ...pinnedStyles,
+                boxShadow: "none",
               }}
             >
               {group

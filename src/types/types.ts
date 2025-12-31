@@ -96,6 +96,7 @@ export interface Props<T extends GenericRecord> extends TableProps {
   selectedRows?: T[];
   onChangeSelectedRows?: (newSelection: T[]) => void;
   sortConfig?: SortConfig;
+  rowHoverEffect?: boolean;
 }
 
 /**

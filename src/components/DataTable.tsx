@@ -10,7 +10,7 @@ import {
   Toolbar,
   useTheme,
 } from "@mui/material";
-import { IDataTable } from "../types";
+import { IDataTable } from "../types/index";
 import CustomPagination from "./CustomPagination";
 import "./style.css";
 import RenderRow from "./RenderRow";
@@ -75,6 +75,7 @@ const DataTable = <T extends IDataTable.GenericRecord>(
     selectedRows,
     onChangeSelectedRows,
     sortConfig,
+    rowHoverEffect = true,
     ...rest
   } = props;
 
@@ -136,6 +137,22 @@ const DataTable = <T extends IDataTable.GenericRecord>(
       _columnsData.push({
         _key: "selected",
         label: "",
+        width: 80,
+        renderHeader: () => {
+          const isSelectAll = selectedRows?.length === rows.length;
+          return (
+            <Checkbox
+              sx={{
+                padding: 0,
+                borderRadius: 0,
+              }}
+              indeterminate={!!selectedRows?.length && !isSelectAll}
+              checked={isSelectAll}
+              onKeyDown={(e) => e.stopPropagation()}
+              onClick={() => onChangeSelectedRows?.(isSelectAll ? [] : rows)}
+            />
+          );
+        },
         renderCell: (row) => {
           return (
             <Checkbox
@@ -162,7 +179,9 @@ const DataTable = <T extends IDataTable.GenericRecord>(
   }, [
     _columns,
     handleChangeSelected,
+    onChangeSelectedRows,
     rowSelection,
+    rows,
     selectedRows,
     serialNumber,
   ]);
@@ -265,6 +284,7 @@ const DataTable = <T extends IDataTable.GenericRecord>(
                         : {}),
                       ...item,
                     }}
+                    hover={rowHoverEffect}
                     columns={updatedColumns}
                     visibleColumns={visibleColumns}
                     additionalColumns={additionalColumns}

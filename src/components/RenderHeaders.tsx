@@ -1,4 +1,4 @@
-import { IDataTable } from "../types";
+import { IDataTable } from "../types/index";
 import Resizable from "./Resizable";
 import {
   TableCell,
@@ -132,25 +132,27 @@ const RenderHeaders = <T extends IDataTable.GenericRecord>({
                       children
                     )}
 
-                    <Typography
-                      className="resizer"
-                      component={"span"}
-                      ref={ref}
-                      color="primary"
-                      sx={{
-                        ":active": {
-                          background: isResizable
-                            ? theme.palette.primary.main
-                            : "",
-                        },
-                        ":hover": {
-                          background: isResizable
-                            ? theme.palette.primary.main
-                            : "",
-                        },
-                        cursor: isResizable ? "col-resize" : "default",
-                      }}
-                    ></Typography>
+                    {isResizable && (
+                      <Typography
+                        className="resizer"
+                        component={"span"}
+                        ref={ref}
+                        color="primary"
+                        sx={{
+                          ":active": {
+                            background: isResizable
+                              ? theme.palette.primary.main
+                              : "",
+                          },
+                          ":hover": {
+                            background: isResizable
+                              ? theme.palette.primary.main
+                              : "",
+                          },
+                          cursor: isResizable ? "col-resize" : "default",
+                        }}
+                      ></Typography>
+                    )}
                   </TableCell>
                 )}
               </Resizable>

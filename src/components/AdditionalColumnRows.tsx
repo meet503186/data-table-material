@@ -1,5 +1,5 @@
-import { IconButton, Switch, TableCell, TableProps } from "@mui/material";
-import { IDataTable } from "../types";
+import { IconButton, Switch, TableCell, TableProps, useTheme } from "@mui/material";
+import { IDataTable } from "../types/index";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 /**
@@ -42,6 +42,8 @@ const AdditionalColumnRows = <T extends IDataTable.GenericRecord>({
   item: T;
   size?: TableProps["size"];
 }): (React.JSX.Element | null)[] => {
+  const theme = useTheme()
+  
   return data.map(
     ({ label, width, _key, hidden, type, onClick, hasPermission }) => {
       if (hidden) {
@@ -97,6 +99,7 @@ const AdditionalColumnRows = <T extends IDataTable.GenericRecord>({
             textOverflow: "ellipsis",
             overflow: "hidden",
             maxWidth: width ?? 80,
+            borderBottom: `1px solid ${theme.palette.grey[300]}`
           }}
         >
           {renderCell()}

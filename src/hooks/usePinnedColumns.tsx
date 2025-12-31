@@ -13,6 +13,8 @@ export const usePinnedColumns = <T extends IDataTable.GenericRecord>(
     const leftCols = columns.filter((col) => col.pinned === "left");
     const rightCols = columns.filter((col) => col.pinned === "right");
 
+    const hasPinnedCols = !!leftCols.length || !!rightCols.length;
+
     // Calculate cumulative positions for left-pinned columns
     const leftPinnedPositions = new Map<string, number>();
     let leftOffset = 0;
@@ -33,6 +35,7 @@ export const usePinnedColumns = <T extends IDataTable.GenericRecord>(
     return {
       leftPinnedPositions,
       rightPinnedPositions,
+      hasPinnedCols,
     };
   }, [columns]);
 };
