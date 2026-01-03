@@ -93,6 +93,7 @@ export interface Props<T extends GenericRecord> extends TableProps {
   exportConfig?: ExportConfig;
 
   rowSelection?: boolean;
+  rowSelectionType?: "single" | "multiple";
   selectedRows?: T[];
   onChangeSelectedRows?: (newSelection: T[]) => void;
   sortConfig?: SortConfig;

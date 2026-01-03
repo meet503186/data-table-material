@@ -71,7 +71,8 @@ const DataTable = <T extends IDataTable.GenericRecord>(
     size = "small",
     getLocalizedText,
     exportConfig = {},
-    rowSelection = false,
+    rowSelection,
+    rowSelectionType = "multiple",
     selectedRows,
     onChangeSelectedRows,
     sortConfig,
@@ -119,13 +120,19 @@ const DataTable = <T extends IDataTable.GenericRecord>(
       if (!selectedRows || !onChangeSelectedRows) return;
 
       const isSelected = selectedRows.some((row) => row.id === selectedRow.id);
-      const newSelection = isSelected
-        ? selectedRows.filter((row) => row.id !== selectedRow.id)
-        : [...selectedRows, selectedRow];
 
-      onChangeSelectedRows(newSelection);
+      if (rowSelectionType === "multiple") {
+        const newSelection = isSelected
+          ? selectedRows.filter((row) => row.id !== selectedRow.id)
+          : [...selectedRows, selectedRow];
+
+        onChangeSelectedRows(newSelection);
+        return;
+      }
+
+      onChangeSelectedRows(isSelected ? [] : [selectedRow]);
     },
-    [onChangeSelectedRows, selectedRows]
+    [onChangeSelectedRows, rowSelectionType, selectedRows]
   );
 
   const showExportButtons = exportConfig.csvEnabled || exportConfig.pdfEnabled;
@@ -139,17 +146,19 @@ const DataTable = <T extends IDataTable.GenericRecord>(
         label: "",
         width: 80,
         renderHeader: () => {
-          const isSelectAll = selectedRows?.length === rows.length;
+          if (rowSelectionType === "single") return <></>;
+
+          const isAllSelected = selectedRows?.length === rows.length;
           return (
             <Checkbox
               sx={{
                 padding: 0,
                 borderRadius: 0,
               }}
-              indeterminate={!!selectedRows?.length && !isSelectAll}
-              checked={isSelectAll}
+              indeterminate={!!selectedRows?.length && !isAllSelected}
+              checked={isAllSelected}
               onKeyDown={(e) => e.stopPropagation()}
-              onClick={() => onChangeSelectedRows?.(isSelectAll ? [] : rows)}
+              onClick={() => onChangeSelectedRows?.(isAllSelected ? [] : rows)}
             />
           );
         },
@@ -181,6 +190,7 @@ const DataTable = <T extends IDataTable.GenericRecord>(
     handleChangeSelected,
     onChangeSelectedRows,
     rowSelection,
+    rowSelectionType,
     rows,
     selectedRows,
     serialNumber,
